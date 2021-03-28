@@ -48,14 +48,28 @@ while game == True:
  time.sleep(0.5)
  print(h+'You have '+str(keilpe)+' Kelp')
  time.sleep(1.0)
- print('\n'*3+'Would you like to build a:')
- print('1. A factory\n2. A city\n3. A tunnel\n4. Nothing, next round please.')
- if Errors < 5:
+ 
+ while Errors < 5:
+  print('\n'*3+'Would you like to build a:')
+  print('1. A factory\n2. A city\n3. A tunnel\n4. Nothing, next round please.')
   X = input()
   if X in Options:
-   break
+   if X in [4,'nothing']:
+     pass
+   elif X in [1,'factory']:
+     pass
+   elif X in [2,'city']:
+     pass
+   elif X in [3,'tunnel']:
+     pass
   else:
    Errors+=1
+ if Errors == 5:
+   print('The people have lost faith in you, exile is the only option now...')
+   print('Would you like to go into exile?')
+   a = input()
+   print('Goodbye')
+   game =  False
 #Generating resources
  plastique += p[0]
  aqua_vida += p[1]
