@@ -26,10 +26,12 @@ class Building:
       self.locationX = locationX
       self.locationY = locationY
     def place_building(self):
+      loactionX,locationY = input('Where would you like to put it?\n\nPlease enter co-ordiantes seperated by a comma (e.g 3,2)\n').split(',',2)
       board[self.locationX][self.locationY] = self.type
     def upgrade_building(self,type,lvl):
       self.lvl += 1
       p[type] +=1
+#Request building location
 #Game loop
 while game == True:
 #resetting game board
@@ -48,22 +50,27 @@ while game == True:
  time.sleep(0.5)
  print(h+'You have '+str(keilpe)+' Kelp')
  time.sleep(1.0)
- 
+ #Player actions (What would you like to build?)
+ #Also punishes player for not taking the game seriosly
  while Errors < 5:
   print('\n'*3+'Would you like to build a:')
   print('1. A factory\n2. A city\n3. A tunnel\n4. Nothing, next round please.')
   X = input()
   if X in Options:
-   if X in [4,'nothing']:
+   if X in ['4','nothing']:
      pass
-   elif X in [1,'factory']:
+   elif X in ['1','factory']:
+     #This will check if resources are Avalible
+    if True:
+     Factory.building = 
+     building.place_building()
+   elif X in ['2','city']:
      pass
-   elif X in [2,'city']:
-     pass
-   elif X in [3,'tunnel']:
+   elif X in ['3','tunnel']:
      pass
   else:
    Errors+=1
+#Possible to lose game through mistyping
  if Errors == 5:
    print('The people have lost faith in you, exile is the only option now...')
    print('Would you like to go into exile?')
@@ -74,3 +81,4 @@ while game == True:
  plastique += p[0]
  aqua_vida += p[1]
  keilpe += p[2]
+ Errors = 0
