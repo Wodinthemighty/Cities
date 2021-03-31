@@ -7,14 +7,15 @@ board = [[" | " for x in range(width)] for y in range(height)]
 board[height//2][width//2] = "🏙️  "
 game = True
 h = ' '*10
+Buildings = [[width//2,height//2]]
 Options = ['1','2','3','4','factory','city','tunnel','nothing']
 def clear_board():
  os.system("ls")
  time.sleep(1)
 #initilizing variables for resources
-plastique = 0
-aqua_vida = 0
-keilpe = 0
+plastique = 5
+aqua_vida = 5
+keilpe = 5
 p = [0,0,0]
 
 #Building data, creating buildings
@@ -27,10 +28,15 @@ class Building:
     def place_building(self):
       try:
         locationX,locationY = input('Where would you like to put it?\n\nPlease enter co-ordiantes seperated by a comma (e.g 3,2)\n').split(',',2)
-        self.locationX = int(locationX)
-        self.locationY = int(locationY)
-        board[self.locationX][self.locationY] = self.type
-      except:
+        self.locationX = int(locationX)-1
+        self.locationY = int(locationY)-1
+        #Check if spot is taken
+        if [self.locationX,self.locationY] in Buildings:
+         raise ValueError("There is already a building there!")
+        else:
+         board[self.locationX][self.locationY] = self.type
+         Buildings.append([self.locationX,self.locationY])
+      except ValueError:
         print('Please re-enter coordiantes')
         self.place_building()
     def upgrade_building(self,type,lvl):
@@ -40,7 +46,7 @@ class Building:
 def player_action():
  Errors = 0
  Yes = True
- while Errors < 5 & Yes == True:
+ while Errors < 5 and Yes == True:
   Errors += 1
   list_resources()
   print('\n'*3+'Would you like to build a:')
@@ -52,22 +58,30 @@ def player_action():
     Yes = False
    elif X in ['1','factory']:
      #This will check if resources are Avalible
-    if plastique >=1 & aqua_vida >=1:
+    if plastique >=1 and aqua_vida >=1:
      #Create a generic building
      bob = Building('🏭  ',1,0,0)
      bob.place_building()
+     p[0]+=1
+     p[1]+=1
+     p[2]+=1
     else:
       print('You cannot afford that.')
       player_action()
    elif X in ['2','city']:
-    if plastique >=3 & aqua_vida >=3 & keilpe >=3:
+    if plastique >=3 and aqua_vida >=3 and keilpe >=3:
+     plastique+=-3
+     aqua_vida+=-3
+     keilpe+=-3
      bob = Building('🏙️  ',1,0,0)
      bob.place_building()
+     p[2]+=-1
+     p[1]+=-1
     else:
       print('You cannot afford that.')
       player_action()
    elif X in ['3','tunnel']:
-    if plastique >=1 & aqua_vida >=0 & keilpe >=0:
+    if plastique >=1 and aqua_vida >=0 and keilpe >=0:
      bob = Building('🚇  ',1,0,0)
      bob.place_building()
     else:
@@ -107,3 +121,7 @@ while game == True:
  aqua_vida += p[1]
  keilpe += p[2]
  Errors = 0
+#lose the game from starvation
+ if keilpe < 0 or aqua_vida < 0:
+   print('Your people witness the end of days as you embrace the void...')
+   game = False
