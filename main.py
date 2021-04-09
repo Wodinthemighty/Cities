@@ -1,9 +1,12 @@
 #Board initilisation
 import os
 import time
+import random
 height=11
 width=11
-board = [[" | " for x in range(width)] for y in range(height)]
+def one(num):
+ return num+1
+board = [[" | " for x in map(one,range(width))] for y in map(one,range(height))]
 board[height//2][width//2] = "🏙️  "
 game = True
 h = ' '*10
@@ -16,8 +19,12 @@ def clear_board():
 plastique = 5
 aqua_vida = 5
 keilpe = 5
-p = [0,0,0]
-
+p = [1,-1,-1]
+points = 1
+turn_count = 0
+max_turns = random.randint(5,15)
+#construction queue
+c_list = []
 #Building data, creating buildings
 class Building:
     def __init__(self,type,lvl,locationX,locationY):
@@ -29,19 +36,22 @@ class Building:
       try:
         global built
         locationX,locationY = input('Where would you like to put it?\n\nPlease enter co-ordiantes seperated by a comma (e.g 3,2)\n').split(',',2)
-        self.locationX = int(locationX)-1
-        self.locationY = int(locationY)-1
+        self.locationX = int(locationX)
+        self.locationY = int(locationY)
         #Check if spot is taken
-        if [self.locationX,self.locationY] in Buildings:
-         print("There is already a building there!")
-         raise ValueError()
-        elif tunnel_check(self.locationX,self.locationY) or self.type == '🚇  ':
-         board[self.locationX][self.locationY] = self.type
-         Buildings.append([self.locationX,self.locationY])
-         built = True
-         print('\nIt has been added to the list.\n')
-        else:
-         print('You need to build next to a tunnel!')
+        try:
+         if [self.locationX,self.locationY] in Buildings:
+          print("There is already a building there!")
+          raise ValueError()
+         elif tunnel_check(self.locationY,self.locationX) or self.type == '🚇  ':
+          board[self.locationY][self.locationX] = self.type
+          Buildings.append([self.locationX,self.locationY])
+          built = True
+          print('It has been added to the list.\n')
+         else:
+          print('You need to build next to a tunnel!')
+          raise ValueError()
+        except:
          raise ValueError()
       except ValueError:
         print('Please re-enter coordiantes\npress anything to re-enter, or Z to cancel')
@@ -54,15 +64,23 @@ class Building:
       p[type] +=1
 #Check if location is next to a tunnel
 def tunnel_check(X,Y):
-  if board[X][Y-1] == '🚇  ':
+  try:
+    if board[X][Y-1] == '🚇  ':
+      return True
+    if board[X][Y+1] == '🚇  ':
+      return True
+    if board[X-1][Y] == '🚇  ':
+      return True
+    if board[X+1][Y] == '🚇  ':
+      return True
+    else:
+      return False
+  except:
+   if board[X-1][Y] == '🚇  ':
     return True
-  if board[X][Y+1] == '🚇  ':
+   if board[X][Y-1] == '🚇  ':
     return True
-  if board[X-1][Y] == '🚇  ':
-    return True
-  if board[X+1][Y] == '🚇  ':
-    return True
-  else:
+   else:
     return False
   
 
@@ -85,16 +103,15 @@ def player_action():
    elif X in ['1','factory']:
      #This will check if resources are Avalible
     if plastique >=1 and aqua_vida >=1:
- 
      #Create a generic building
      bob = Building('🏭  ',1,0,0)
      bob.place_building()
-     p[0]+=1
-     p[1]+=1
-     p[2]+=1
      if built:
       plastique+=-1
       aqua_vida+=-1
+      p[0]+=1
+      p[1]+=1
+      p[2]+=1
     else:
       print('You cannot afford that.')
       player_action()
@@ -102,12 +119,13 @@ def player_action():
     if plastique >=3 and aqua_vida >=3 and keilpe >=3:
      bob = Building('🏙️  ',1,0,0)
      bob.place_building()
-     p[2]+=-1
-     p[1]+=-1
      if built:
       plastique+=-3
       aqua_vida+=-3
       keilpe+=-3
+      p[2]+=-1
+      p[1]+=-1
+      points += 1
     else:
       print('You cannot afford that.')
       player_action()
@@ -126,9 +144,9 @@ def player_action():
  if Errors == 5:
    print('The people have lost faith in you, exile is the only option now...')
    print('Would you like to go into exile?')
-   a = input()
-   print('Goodbye')
-   game =  False
+   if input() != False:
+    print('Goodbye')
+    game =  False
 def list_resources():
  print('\n'+h+'Avalible resources:\n\n')
  time.sleep(0.5)
@@ -156,7 +174,12 @@ while game == True:
  aqua_vida += p[1]
  keilpe += p[2]
  Errors = 0
+#building 
 #lose the game from starvation
  if keilpe < 0 or aqua_vida < 0:
    print('Your people witness the end of days as you embrace the void...')
    game = False
+ turn_count +=1
+ if turn_count == max_turns:
+  print('The game is over, you sucessfully saved '+str(points)+' million people, the people thank you')
+  break
