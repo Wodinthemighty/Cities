@@ -32,7 +32,7 @@ def clear_board():
  os.system("ls")
  time.sleep(1)
 #initilizing variables for resources
-start_resources = 2+math.ceil(math.log(height,3))
+start_resources = 1+math.ceil(math.sqrt(height))
 plastique = start_resources
 aqua_vida = start_resources
 keilpe = start_resources
@@ -209,7 +209,7 @@ while game == True:
  Errors = 0
 #lose the game from starvation
  if keilpe < 0 or aqua_vida < 0:
-   print('Your people witness the end of days as you embrace the void...')
+   print('Out of resources, chaos ensues\nYour people witness the end of days as you embrace the void...')
    game = False
  turn_count +=1
  if turn_count == max_turns:
