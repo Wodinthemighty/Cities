@@ -2,6 +2,7 @@
 import os
 import time
 import random
+import math
 #Custom board sizing
 def get_size():
   try:
@@ -31,9 +32,10 @@ def clear_board():
  os.system("ls")
  time.sleep(1)
 #initilizing variables for resources
-plastique = 2
-aqua_vida = 2
-keilpe = 2
+start_resources = 2+math.ceil(math.log(height,3))
+plastique = start_resources
+aqua_vida = start_resources
+keilpe = start_resources
 p = [1,-1,-1]
 points = 1
 turn_count = 0
@@ -83,43 +85,38 @@ class Building:
 #Check if location is next to a tunnel
 #Additional excepts to deal with limited grid range
 def tunnel_check(X,Y):
-  if X != height & Y != width:
-    try:
-      if board[X][Y-1] == '🚇  ':
-        return True
-      if board[X][Y+1] == '🚇  ':
-        return True
-      if board[X-1][Y] == '🚇  ':
-        return True
-      if board[X+1][Y] == '🚇  ':
-        return True
-      else:
-        return False
-    except:
-      if board[X+1][Y] == '🚇  ':
-        return True
-      if board[X][Y+1] == '🚇  ':
-        return True
-      if board[X-1][Y] == '🚇  ':
-        return True
-      if board[X][Y-1] == '🚇  ':
-        return True
-      print('Hello')
+  try:
+    if board[X][Y-1] == '🚇  ':
+      return True
+    if board[X][Y+1] == '🚇  ':
+      return True
+    if board[X-1][Y] == '🚇  ':
+      return True
+    if board[X+1][Y] == '🚇  ':
+      return True
+    else:
       return False
-  else:
-   return True
-  
-
-#Player actions
+  except:
+    if board[X+1][Y] == '🚇  ':
+      return True
+    if board[X][Y+1] == '🚇  ':
+      return True
+    if board[X-1][Y] == '🚇  ':
+      return True
+    if board[X][Y-1] == '🚇  ':
+      return True
+    return False
+#Actions taken by the player
 def player_action():
  Errors = 0
  Yes = True
+ global points
  while Errors < 5 and Yes == True:
   print_board()
   print('It is now year '+str(turn_count)+' out of your 7 years')
   list_resources()
   print('\n'*3+'Would you like to build a:')
-  print("1. A factory (1 H20 1 PLA)\n2. A city (3 H20 3 PLA 3 KLP)\n3. A tunnel (1 PLA)\n4. Nothing, next round please. (It's free!)")
+  print("1. A factory (1 H20 1 PLA)\n2. A city (2 H20 3 PLA 4 KLP)\n3. A tunnel (1 PLA)\n4. Nothing, next round please. (It's free!)")
   X = input()
   if X in Options:
    global plastique
