@@ -56,12 +56,12 @@ class Building:
          if [self.locationX,self.locationY] in Buildings:
           print("There is already a building there!")
           raise ValueError()
-         elif tunnel_check(self.locationY,self.locationX) or self.type == '🚇  ':
+         elif self.type == '🚇  ':
           board[self.locationY][self.locationX] = self.type
           Buildings.append([self.locationX,self.locationY])
           built = True
           print('It has been added to the list.\n')
-         elif tunnel_check(self.locationY,self.locationX) & self.type == '🚇  ':
+         elif tunnel_check(self.locationY,self.locationX):
           board[self.locationY][self.locationX] = self.type
           Buildings.append([self.locationX,self.locationY])
           built = True
@@ -72,7 +72,7 @@ class Building:
         except:
          raise ValueError()
       except ValueError:
-        print('Please re-enter coordiantes\npress anything to re-enter, or Z to cancel')
+        print('Please re-enter coordiantes\nPress anything to re-enter, or Z to cancel')
         if input() != 'z':
          self.place_building()
         else:
@@ -83,7 +83,7 @@ class Building:
 #Check if location is next to a tunnel
 #Additional excepts to deal with limited grid range
 def tunnel_check(X,Y):
-  if X != 10 & Y != 10:
+  if X != height & Y != width:
     try:
       if board[X][Y-1] == '🚇  ':
         return True
@@ -116,9 +116,10 @@ def player_action():
  Yes = True
  while Errors < 5 and Yes == True:
   print_board()
+  print('It is now year '+str(turn_count)+' out of your 7 years')
   list_resources()
   print('\n'*3+'Would you like to build a:')
-  print('1. A factory\n2. A city\n3. A tunnel\n4. Nothing, next round please.')
+  print("1. A factory (1 H20 1 PLA)\n2. A city (3 H20 3 PLA 3 KLP)\n3. A tunnel (1 PLA)\n4. Nothing, next round please. (It's free!)")
   X = input()
   if X in Options:
    global plastique
@@ -141,6 +142,7 @@ def player_action():
       p[2]+=1
     else:
       print('You cannot afford that.')
+      time.sleep(1)
       player_action()
    elif X in ['2','city']:
     if plastique >=3 and aqua_vida >=3 and keilpe >=3:
@@ -155,6 +157,7 @@ def player_action():
       points += 1
     else:
       print('You cannot afford that.')
+      time.sleep(1)
       player_action()
    elif X in ['3','tunnel']:
     if plastique >=1 and aqua_vida >=0 and keilpe >=0:
@@ -164,6 +167,7 @@ def player_action():
       plastique+=-1
     else:
       print('You cannot afford that.')
+      time.sleep(1)
       player_action()
   else:
    Errors += 1
@@ -197,8 +201,9 @@ while game == True:
 #resetting game board
  clear_board()
  #Player actions (What would you like to build?)
+ 
  player_action()
-
+ 
 #Generating resources
  plastique += p[0]
  aqua_vida += p[1]
